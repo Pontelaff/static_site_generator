@@ -26,17 +26,17 @@ class TestHTMLNode(unittest.TestCase):
         }
         node = HTMLNode("a", "This is a link.", None, attributes)
 
-        return self.assertEqual(repr(node),"HTMLNode(a, This is a link., children: None, {'target': '_blank', 'href': 'https://www.boot.dev'})")
+        self.assertEqual(repr(node),"HTMLNode(a, This is a link., children: None, {'target': '_blank', 'href': 'https://www.boot.dev'})")
 
     def test_repr_child(self):
         node = HTMLNode("p", "This is a paragraph.", None, None)
         div = HTMLNode("div", None, [node], None)
 
-        return self.assertEqual(repr(div),"HTMLNode(div, None, children: ['p'], None)")
+        self.assertEqual(repr(div),"HTMLNode(div, None, children: ['p'], None)")
 
     def test_to_html(self):
         node = HTMLNode("p", "This is a paragraph.", None, None)
-        return self.assertRaises(NotImplementedError, node.to_html)
+        self.assertRaises(NotImplementedError, node.to_html)
 
     def test_props_to_html(self):
         node = HTMLNode("a", "This is a link.", None, {'target': '_blank', 'href': 'https://www.boot.dev'})

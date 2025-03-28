@@ -1,5 +1,3 @@
-
-
 class HTMLNode():
     def __init__(self, tag: str = None, value: str = None, children: list["HTMLNode"] = None, props: dict = None) -> "HTMLNode":
         self.tag = tag
@@ -14,26 +12,8 @@ class HTMLNode():
             children = None
         return f'HTMLNode({self.tag}, {self.value}, children: {children}, {self.props})'
 
-    # def to_html(self):
-    #     if self.tag == None:
-    #         tag_open, tag_close = "", ""
-    #     else:
-    #         tag_open = f'<{self.tag}{self.props_to_html()}>'
-    #         tag_close = f'</{self.tag}>'
-    #     if self.value == None:
-    #         value = ""
-    #     else:
-    #         value = self.value
-    #     if self.children == None:
-    #         children = ""
-    #     else:
-    #         children = repr(self.children)
-
-    #     return f"{tag_open}{value}{children}{tag_close}"
-
     def to_html(self) -> str:
         raise NotImplementedError("to_html method not implemented")
-
 
     def props_to_html(self) -> str:
         '''Returns the attributes as a string with a leading whitespace'''
