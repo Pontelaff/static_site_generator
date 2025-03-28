@@ -1,3 +1,5 @@
+import functools
+
 class HTMLNode():
     def __init__(self, tag: str = None, value: str = None, children: list["HTMLNode"] = None, props: dict = None) -> "HTMLNode":
         self.tag = tag
@@ -23,3 +25,37 @@ class HTMLNode():
                 attributes += f' {key}="{value}"'
 
         return attributes
+
+
+class LeafNode(HTMLNode):
+    def __init__(self, tag, value, props = None):
+        super().__init__(tag, value, None, props)
+
+    def to_html(self):
+        if self.value is None:
+            raise ValueError("missing value for leaf node")
+
+        if self.tag == None:
+            tag_open, tag_close = "", ""
+        else:
+            tag_open = f'<{self.tag}{self.props_to_html()}>'
+            tag_close = f'</{self.tag}>'
+
+        return f"{tag_open}{self.value}{tag_close}"
+
+
+class ParentNode(HTMLNode):
+    def __init__(self, tag: str, children: list[HTMLNode], props: dict = None):
+        super().__init__(tag, None, children, props)
+
+    def to_html(self):
+        if self.tag is None:
+            raise ValueError("missing tag vor parent node")
+        if self.children is None or len(self.children) == 0:
+            raise ValueError("missing child nodes for parent node")
+
+        tag_open = f'<{self.tag}{self.props_to_html()}>'
+        tag_close = f'</{self.tag}>'
+        child_html = functools.reduce(lambda aggregator, child: aggregator + child.to_html(), self.children, "")
+
+        return tag_open + child_html + tag_close
