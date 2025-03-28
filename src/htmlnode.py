@@ -1,7 +1,7 @@
 import functools
 
 class HTMLNode():
-    def __init__(self, tag: str = None, value: str = None, children: list["HTMLNode"] = None, props: dict = None) -> "HTMLNode":
+    def __init__(self, tag: str = None, value: str = None, children: list["HTMLNode"] = None, props: dict = None):
         self.tag = tag
         self.value = value
         self.children = children
@@ -28,7 +28,7 @@ class HTMLNode():
 
 
 class LeafNode(HTMLNode):
-    def __init__(self, tag, value, props = None):
+    def __init__(self, tag:  str, value: str, props: dict = None):
         super().__init__(tag, value, None, props)
 
     def to_html(self):
