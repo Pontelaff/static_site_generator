@@ -42,4 +42,41 @@ def extract_markdown_images(raw_text: str) -> list[tuple]:
     return re.findall(r"!\[(.*?)\]\((.*?)\)", raw_text)
 
 def extract_markdown_links(raw_text: str) -> list[tuple]:
-    return re.findall(r"\[(.*?)\]\((.*?)\)", raw_text)
+    return re.findall(r"[^!]\[(.*?)\]\((.*?)\)", raw_text)
+
+def split_url_nodes(extractor: callable, formater: callable, text_type: TextType) -> callable:
+    def split_url_nodes_by_type(old_nodes: list[TextNode]) -> list[TextNode]:
+        new_nodes = []
+        for node in old_nodes:
+            if node.text_type != TextType.PLAIN:
+                new_nodes.append(node)
+                continue
+            current_text = node.text
+            matches = extractor(current_text)
+            for match in matches:
+                split_text = current_text.split(formater(match), maxsplit=1)
+                if split_text[0] != '':
+                    new_nodes.append(TextNode(split_text[0], TextType.PLAIN))
+                new_nodes.append(TextNode(match[0], text_type, match[1]))
+                current_text = split_text[1]
+            if current_text != '':
+                new_nodes.append(TextNode(current_text, TextType.PLAIN))
+
+        return new_nodes
+    return split_url_nodes_by_type
+
+split_nodes_image = split_url_nodes(extract_markdown_images, lambda image: f"![{image[0]}]({image[1]})", TextType.IMAGE)
+split_nodes_link = split_url_nodes(extract_markdown_links, lambda link: f"[{link[0]}]({link[1]})", TextType.LINK)
+
+def text_to_textnodes(text: str) -> list[TextNode]:
+    nodes = [TextNode(text, TextType.PLAIN)]
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+    nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "__", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+    # nodes = split_nodes_delimiter(nodes, "```", TextType.CODE)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+
+    return nodes
