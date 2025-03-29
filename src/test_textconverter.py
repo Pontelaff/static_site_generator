@@ -50,7 +50,19 @@ class TestConversion(unittest.TestCase):
             TextNode("bold", TextType.BOLD),
             TextNode(" text", TextType.PLAIN)]
 
-        self.assertEqual(nodes, expected_result)
+        self.assertListEqual(nodes, expected_result)
+
+    def test_split_nodes_delimiter_bold_double(self):
+        text_node = TextNode("This **text** contains **bold** text", TextType.PLAIN)
+        nodes = split_nodes_delimiter([text_node], "**", TextType.BOLD)
+        expected_result = [
+            TextNode("This ", TextType.PLAIN),
+            TextNode("text", TextType.BOLD),
+            TextNode(" contains ", TextType.PLAIN),
+            TextNode("bold", TextType.BOLD),
+            TextNode(" text", TextType.PLAIN)]
+
+        self.assertListEqual(nodes, expected_result)
 
     def test_split_nodes_delimiter_italic(self):
         text_node = TextNode("This text contains _italic_ text", TextType.PLAIN)
@@ -60,7 +72,7 @@ class TestConversion(unittest.TestCase):
             TextNode("italic", TextType.ITALIC),
             TextNode(" text", TextType.PLAIN)]
 
-        self.assertEqual(nodes, expected_result)
+        self.assertListEqual(nodes, expected_result)
 
     def test_split_nodes_delimiter_multiple(self):
         text_node = TextNode("This text contains **bold** and _italic_ text", TextType.PLAIN)
@@ -73,7 +85,7 @@ class TestConversion(unittest.TestCase):
             TextNode("italic", TextType.ITALIC),
             TextNode(" text", TextType.PLAIN)]
 
-        self.assertEqual(nodes2, expected_result)
+        self.assertListEqual(nodes2, expected_result)
 
     def test_split_nodes_delimiter_end_of_str(self):
         text_node = TextNode("This text is **bold**", TextType.PLAIN)
@@ -82,7 +94,7 @@ class TestConversion(unittest.TestCase):
             TextNode("This text is ", TextType.PLAIN),
             TextNode("bold", TextType.BOLD)]
 
-        self.assertEqual(nodes, expected_result)
+        self.assertListEqual(nodes, expected_result)
 
     def test_split_nodes_delimiter_no_plain(self):
         text_node = TextNode("`inline code`", TextType.PLAIN)
@@ -90,7 +102,13 @@ class TestConversion(unittest.TestCase):
         expected_result = [
             TextNode("inline code", TextType.CODE)]
 
-        self.assertEqual(nodes, expected_result)
+        self.assertListEqual(nodes, expected_result)
+
+    def test_split_nodes_delimiter_unmatched(self):
+        text_node = TextNode("This **text** contains invalid **syntax", TextType.PLAIN)
+
+        with self.assertRaises(ValueError):
+            nodes = split_nodes_delimiter([text_node], "**", TextType.BOLD)
 
     def test_extract_markdown_images(self):
         matches = extract_markdown_images(
