@@ -69,7 +69,7 @@ split_nodes_image = split_url_nodes(extract_markdown_images, lambda image: f"![{
 split_nodes_link = split_url_nodes(extract_markdown_links, lambda link: f"[{link[0]}]({link[1]})", TextType.LINK)
 
 def text_to_textnodes(text: str) -> list[TextNode]:
-    nodes = [TextNode(text, TextType.PLAIN)]
+    nodes = [TextNode(text.strip(), TextType.PLAIN)]
     nodes = split_nodes_image(nodes)
     nodes = split_nodes_link(nodes)
     nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
@@ -80,3 +80,9 @@ def text_to_textnodes(text: str) -> list[TextNode]:
     nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
 
     return nodes
+
+def markdown_to_blocks(markdown: str) -> list[str]:
+    blocks = markdown.split("\n\n")
+    clean_blocks = [block.strip() for block in blocks if block != ""]
+
+    return clean_blocks
