@@ -267,6 +267,32 @@ This is **text** with an _italic_ word and a `code block` and an \
         ]
 
         self.assertListEqual(nodes, expected_result)
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
+    def test_extract_markdown_images_multiple(self):
+        matches = extract_markdown_images(
+            "This is text with an image ![cat](https://imgur.com/a/7IPJmIk) and one more ![dog](https://imgur.com/a/OgiTolD)"
+        )
+        self.assertListEqual([("cat", "https://imgur.com/a/7IPJmIk"),
+                              ("dog", "https://imgur.com/a/OgiTolD")], matches)
+
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links(
+            "This is text with an [link](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual([("link", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
+    def test_extract_markdown_links_multiple(self):
+        matches = extract_markdown_links(
+            "This is links to a [cat](https://imgur.com/a/7IPJmIk) and a [dog](https://imgur.com/a/OgiTolD)"
+        )
+        self.assertListEqual([("cat", "https://imgur.com/a/7IPJmIk"),
+                              ("dog", "https://imgur.com/a/OgiTolD")], matches)
+
 
 if __name__ == "__main__":
     unittest.main()
