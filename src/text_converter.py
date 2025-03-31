@@ -2,7 +2,6 @@ import re
 
 from textnode import TextNode, TextType
 from htmlnode import LeafNode
-from markdown_converter import extract_markdown_images, extract_markdown_links
 
 def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     match text_node.text_type:
