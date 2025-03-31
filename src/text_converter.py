@@ -1,9 +1,8 @@
-import re
-
 from textnode import TextNode, TextType
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import LeafNode
+from markdown_converter import extract_markdown_images, extract_markdown_links
 
-def text_node_to_html_node(text_node: TextNode):
+def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     match text_node.text_type:
         case TextType.PLAIN:
             return LeafNode(None, text_node.text)
@@ -38,13 +37,7 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
 
     return new_nodes
 
-def extract_markdown_images(raw_text: str) -> list[tuple]:
-    return re.findall(r"!\[(.*?)\]\((.*?)\)", raw_text)
-
-def extract_markdown_links(raw_text: str) -> list[tuple]:
-    return re.findall(r"[^!]\[(.*?)\]\((.*?)\)", raw_text)
-
-def split_url_nodes(extractor: callable, formater: callable, text_type: TextType) -> callable:
+def split_url_nodes(extractor: callable, markdown_formater: callable, text_type: TextType) -> callable:
     def split_url_nodes_by_type(old_nodes: list[TextNode]) -> list[TextNode]:
         new_nodes = []
         for node in old_nodes:
@@ -54,7 +47,7 @@ def split_url_nodes(extractor: callable, formater: callable, text_type: TextType
             current_text = node.text
             matches = extractor(current_text)
             for match in matches:
-                split_text = current_text.split(formater(match), maxsplit=1)
+                split_text = current_text.split(markdown_formater(match), maxsplit=1)
                 if split_text[0] != '':
                     new_nodes.append(TextNode(split_text[0], TextType.PLAIN))
                 new_nodes.append(TextNode(match[0], text_type, match[1]))
@@ -76,13 +69,6 @@ def text_to_textnodes(text: str) -> list[TextNode]:
     nodes = split_nodes_delimiter(nodes, "__", TextType.BOLD)
     nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
     nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
-    # nodes = split_nodes_delimiter(nodes, "```", TextType.CODE)
     nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
 
     return nodes
-
-def markdown_to_blocks(markdown: str) -> list[str]:
-    blocks = markdown.split("\n\n")
-    clean_blocks = [block.strip() for block in blocks if block != ""]
-
-    return clean_blocks
