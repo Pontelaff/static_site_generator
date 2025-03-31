@@ -24,3 +24,23 @@ def markdown_to_blocks(markdown: str) -> list[str]:
 
     return clean_blocks
 
+def is_ordered_list(markdown: str) -> bool:
+    for i, line in enumerate(markdown.split("\n")):
+        num = line.split(".")[0]
+        if num != f"{i + 1}":
+            return False
+    return True
+
+def get_markdown_block_type(markdown: str) -> BlockType:
+    # TODO: avoid matching code blocks with an injected tripple backtick
+    if re.match(r"^#{1,6} .+$", markdown) is not None:
+        return BlockType.HEADING
+    if re.match(r"^```\w*(?:\n.*)+\n```$", markdown):
+        return BlockType.CODE
+    if re.match(r"^(> .*\n?)+$", markdown):
+        return BlockType.QUOTE
+    if re.match(r"^(- .*\n?)+$", markdown):
+        return BlockType.UNORDERED_LIST
+    if is_ordered_list(markdown):
+        return BlockType.ORDERED_LIST
+    return BlockType.PARAGRAPH
