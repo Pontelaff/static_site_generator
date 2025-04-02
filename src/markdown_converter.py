@@ -85,3 +85,10 @@ def markdown_to_html_nodes(markdown: str) -> ParentNode:
         child_nodes.append(markdown_block_to_html(block))
 
     return ParentNode("div", child_nodes)
+
+def extract_markdown_heading(markdown: str) -> str:
+    lines = markdown.split("\n")
+    for line in lines:
+        if line.startswith("# "):
+            return line[2:].strip()
+    raise ValueError("title missing")

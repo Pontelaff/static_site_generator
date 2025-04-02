@@ -5,6 +5,7 @@ from markdown_converter import (
     markdown_to_html_nodes,
     markdown_to_blocks,
     get_markdown_block_type,
+    extract_markdown_heading,
 )
 
 class TestMarkdownConverter(unittest.TestCase):
@@ -224,6 +225,37 @@ and a [link](www.xyz.com)
         expected_result = '<div><h1>Heading</h1><p>Text paragraph with two <b>lines</b> and a <a href="www.xyz.com">link</a></p><blockquote>Quote with two <i>lines</i></blockquote></div>'
 
         self.assertEqual(html, expected_result)
+
+    def test_extract_heading(self):
+        md ="""
+# Heading
+
+This is a paragraph
+
+## And another heading
+"""
+        self.assertEqual(extract_markdown_heading(md), "Heading")
+
+    def test_extract_heading2(self):
+        md ="""
+Text before the heading
+
+# Heading
+
+This is a paragraph
+"""
+        self.assertEqual(extract_markdown_heading(md), "Heading")
+
+    def test_extract_heading_missing(self):
+        md ="""
+The heading is missing :(
+
+## This is a second level heading
+"""
+        with self.assertRaises(ValueError):
+            extract_markdown_heading(md)
+
+
 
 if __name__ == "__main__":
     unittest.main()
