@@ -199,13 +199,14 @@ the **same** even with inline stuff
         md = """
 - This is a **bold item**
 - This item is _italic_
+- [link](www.xyz.com)
 """
 
         node = markdown_to_html_nodes(md)
         html = node.to_html()
         self.assertEqual(
             html,
-            "<div><ul><li>This is a <b>bold item</b></li><li>This item is <i>italic</i></li></ul></div>",
+            '<div><ul><li>This is a <b>bold item</b></li><li>This item is <i>italic</i></li><li><a href="www.xyz.com">link</a></li></ul></div>',
         )
 
     def test_markdown_to_html(self):

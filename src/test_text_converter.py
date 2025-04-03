@@ -153,6 +153,13 @@ class TestConversion(unittest.TestCase):
             ],
             new_nodes,
         )
+    def test_split_links_no_text(self):
+        node = TextNode("[link](https://i.imgur.com/zjjcJKZ.png)", TextType.PLAIN)
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [TextNode("link", TextType.LINK, "https://i.imgur.com/zjjcJKZ.png")],
+            new_nodes,
+        )
 
     def test_split_images_and_links(self):
         node = TextNode(
@@ -267,9 +274,16 @@ This is **text** with an _italic_ word and a `code block` and an \
         ]
 
         self.assertListEqual(nodes, expected_result)
+
     def test_extract_markdown_images(self):
         matches = extract_markdown_images(
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
+    def test_extract_markdown_images_no_text(self):
+        matches = extract_markdown_images(
+            "![image](https://i.imgur.com/zjjcJKZ.png)"
         )
         self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
 
@@ -286,9 +300,15 @@ This is **text** with an _italic_ word and a `code block` and an \
         )
         self.assertListEqual([("link", "https://i.imgur.com/zjjcJKZ.png")], matches)
 
+    def test_extract_markdown_links_no_text(self):
+        matches = extract_markdown_links(
+            "[link](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual([("link", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
     def test_extract_markdown_links_multiple(self):
         matches = extract_markdown_links(
-            "This is links to a [cat](https://imgur.com/a/7IPJmIk) and a [dog](https://imgur.com/a/OgiTolD)"
+            "This is links to a [cat](https://imgur.com/a/7IPJmIk) and a [dog](https://imgur.com/a/OgiTolD) and an ![image](https://i.imgur.com/zjjcJKZ.png)"
         )
         self.assertListEqual([("cat", "https://imgur.com/a/7IPJmIk"),
                               ("dog", "https://imgur.com/a/OgiTolD")], matches)

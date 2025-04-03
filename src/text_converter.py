@@ -63,7 +63,7 @@ def extract_markdown_images(markdown: str) -> list[tuple]:
     return re.findall(r"!\[(.*?)\]\((.*?)\)", markdown)
 
 def extract_markdown_links(markdown: str) -> list[tuple]:
-    return re.findall(r"[^!]\[(.*?)\]\((.*?)\)", markdown)
+    return re.findall(r"(?<!!)\[(.*?)\]\((.*?)\)", markdown)
 
 split_nodes_image = split_url_nodes(extract_markdown_images, lambda image: f"![{image[0]}]({image[1]})", TextType.IMAGE)
 split_nodes_link = split_url_nodes(extract_markdown_links, lambda link: f"[{link[0]}]({link[1]})", TextType.LINK)
