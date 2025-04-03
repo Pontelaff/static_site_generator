@@ -12,6 +12,7 @@ class BlockType(Enum):
     QUOTE = "quote"
     UNORDERED_LIST = "unordered_list"
     ORDERED_LIST = "ordered_list"
+    HORIZONTAL_RULE = "horizontal rule"
 
 def markdown_to_blocks(markdown: str) -> list[str]:
     blocks = markdown.split("\n\n")
@@ -32,9 +33,11 @@ def get_markdown_block_type(markdown: str) -> BlockType:
         return BlockType.HEADING
     if re.match(r"^```\w*(?:\n.*)+\n```$", markdown):
         return BlockType.CODE
-    if re.match(r"^(>.*\n?)+$", markdown):
+    if re.match(r"^(?:>.*\n?)+$", markdown):
         return BlockType.QUOTE
-    if re.match(r"^(- .*\n?)+$", markdown):
+    if re.match(r"^(?: *[*-] *){3,}$", markdown):
+        return BlockType.HORIZONTAL_RULE
+    if re.match(r"^(?:- .*\n?)+$", markdown):
         return BlockType.UNORDERED_LIST
     if is_ordered_list(markdown):
         return BlockType.ORDERED_LIST
@@ -52,7 +55,7 @@ def lines_to_list_items(lines: list[str]) -> list[ParentNode]:
         nodes.append(ParentNode("li", text_to_child_nodes(line)))
     return nodes
 
-def markdown_block_to_html(markdown: str) -> ParentNode:
+def markdown_block_to_html(markdown: str) -> HTMLNode:
     block_type = get_markdown_block_type(markdown)
     match block_type:
         case BlockType.HEADING:
@@ -72,6 +75,8 @@ def markdown_block_to_html(markdown: str) -> ParentNode:
             lines = markdown.split("\n")
             text_lines = [line.lstrip("- ") for line in lines]
             return ParentNode("ul", lines_to_list_items(text_lines))
+        case BlockType.HORIZONTAL_RULE:
+            return LeafNode("hr", "")
         case _:
             return ParentNode("p", text_to_child_nodes(" ".join(markdown.split("\n"))))
 

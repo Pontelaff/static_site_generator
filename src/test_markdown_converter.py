@@ -209,13 +209,23 @@ the **same** even with inline stuff
             '<div><ul><li>This is a <b>bold item</b></li><li>This item is <i>italic</i></li><li><a href="www.xyz.com">link</a></li></ul></div>',
         )
 
+    def test_markdown_block_to_html(self):
+        md = "---"
+
+        html = markdown_to_html_nodes(md).to_html()
+        self.assertEqual(html, "<div><hr></hr></div>")
+
     def test_markdown_to_html(self):
         md ="""
 # Heading
 
+***
+
 Text paragraph
 with two **lines**
 and a [link](www.xyz.com)
+
+ - - -
 
 > Quote with
 > two _lines_
@@ -223,7 +233,7 @@ and a [link](www.xyz.com)
         node = markdown_to_html_nodes(md)
         html = node.to_html()
 
-        expected_result = '<div><h1>Heading</h1><p>Text paragraph with two <b>lines</b> and a <a href="www.xyz.com">link</a></p><blockquote>Quote with two <i>lines</i></blockquote></div>'
+        expected_result = '<div><h1>Heading</h1><hr></hr><p>Text paragraph with two <b>lines</b> and a <a href="www.xyz.com">link</a></p><hr></hr><blockquote>Quote with two <i>lines</i></blockquote></div>'
 
         self.assertEqual(html, expected_result)
 

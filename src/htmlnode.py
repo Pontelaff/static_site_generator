@@ -56,6 +56,9 @@ class ParentNode(HTMLNode):
 
         tag_open = f'<{self.tag}{self.props_to_html()}>'
         tag_close = f'</{self.tag}>'
-        child_html = functools.reduce(lambda aggregator, child: aggregator + child.to_html(), self.children, "")
+        try:
+            child_html = functools.reduce(lambda aggregator, child: aggregator + child.to_html(), self.children, "")
+        except ValueError as error:
+            print(f"Could not parse children: {self.children}\n{error}")
 
         return tag_open + child_html + tag_close

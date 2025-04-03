@@ -11,6 +11,7 @@ This tool processes valid Markdown syntax. Refer to the [Markdown Guide](https:/
 - Headings
 - Code Blocks
 - Blockquotes
+- Horizontal rules
 - Unordered Lists
 - Ordered Lists
 
@@ -29,7 +30,6 @@ This tool processes valid Markdown syntax. Refer to the [Markdown Guide](https:/
 - Nested blockquotes
 - Nested lists
 - Heading IDs
-- Horizontal rules
 
 ## 📂 Project Structure
 
