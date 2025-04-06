@@ -1,7 +1,8 @@
 import re
 
+from typing import Sequence
 from enum import Enum
-from htmlnode import ParentNode, LeafNode, HTMLNode
+from htmlnode import ParentNode, LeafNode
 from text_converter import text_to_textnodes, text_node_to_html_node
 
 
@@ -43,10 +44,9 @@ def get_markdown_block_type(markdown: str) -> BlockType:
         return BlockType.ORDERED_LIST
     return BlockType.PARAGRAPH
 
-def text_to_child_nodes(text: str) -> list[HTMLNode]:
+def text_to_child_nodes(text: str) -> Sequence[LeafNode | ParentNode]:
     text_nodes = text_to_textnodes(text)
     child_nodes = [text_node_to_html_node(node) for node in text_nodes]
-    #print(child_nodes)
     return child_nodes
 
 def lines_to_list_items(lines: list[str]) -> list[ParentNode]:
@@ -55,7 +55,7 @@ def lines_to_list_items(lines: list[str]) -> list[ParentNode]:
         nodes.append(ParentNode("li", text_to_child_nodes(line)))
     return nodes
 
-def markdown_block_to_html(markdown: str) -> HTMLNode:
+def markdown_block_to_html(markdown: str) -> LeafNode | ParentNode:
     block_type = get_markdown_block_type(markdown)
     match block_type:
         case BlockType.HEADING:

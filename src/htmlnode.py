@@ -1,13 +1,15 @@
 import functools
 
+from typing import Sequence
+
 class HTMLNode():
-    def __init__(self, tag: str = None, value: str = None, children: list["HTMLNode"] = None, props: dict = None):
+    def __init__(self, tag: str | None = None, value: str | None = None, children: Sequence["LeafNode" | "ParentNode"] | None = None, props: dict | None = None):
         self.tag = tag
         self.value = value
         self.children = children
         self.props = props
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.children is not None:
             children = [child.tag for child in self.children]
         else:
@@ -28,10 +30,10 @@ class HTMLNode():
 
 
 class LeafNode(HTMLNode):
-    def __init__(self, tag:  str, value: str, props: dict = None):
+    def __init__(self, tag:  str | None, value: str, props: dict | None = None):
         super().__init__(tag, value, None, props)
 
-    def to_html(self):
+    def to_html(self) -> str:
         if self.value is None:
             raise ValueError("missing value for leaf node")
 
@@ -45,12 +47,12 @@ class LeafNode(HTMLNode):
 
 
 class ParentNode(HTMLNode):
-    def __init__(self, tag: str, children: list[HTMLNode], props: dict = None):
+    def __init__(self, tag: str, children: Sequence[LeafNode | "ParentNode"], props: dict | None = None):
         super().__init__(tag, None, children, props)
 
-    def to_html(self):
+    def to_html(self) -> str:
         if self.tag is None:
-            raise ValueError("missing tag vor parent node")
+            raise ValueError("missing tag for parent node")
         if self.children is None or len(self.children) == 0:
             raise ValueError("missing child nodes for parent node")
 

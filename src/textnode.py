@@ -9,12 +9,15 @@ class TextType(Enum):
     IMAGE = "image"
 
 class TextNode():
-    def __init__(self, text: str, type: TextType, url: str = None):
+    def __init__(self, text: str, type: TextType, url: str | None = None):
         self.text = text
         self.text_type = type
         self.url = url
 
-    def __eq__(self, other: "TextNode"):
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, TextNode):
+            return NotImplemented
+
         if self.text != other.text:
             return False
         if self.text_type != other.text_type:

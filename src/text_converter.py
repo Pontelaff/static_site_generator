@@ -1,5 +1,6 @@
 import re
 
+from typing import Callable
 from textnode import TextNode, TextType
 from htmlnode import LeafNode
 
@@ -38,7 +39,7 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
 
     return new_nodes
 
-def split_url_nodes(extractor: callable, markdown_formater: callable, text_type: TextType) -> callable:
+def split_url_nodes(extractor: Callable, markdown_formater: Callable, text_type: TextType) -> Callable:
     def split_url_nodes_by_type(old_nodes: list[TextNode]) -> list[TextNode]:
         new_nodes = []
         for node in old_nodes:
